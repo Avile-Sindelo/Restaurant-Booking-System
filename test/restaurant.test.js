@@ -2,12 +2,13 @@ import assert from "assert"
 import RestaurantTableBooking from "../services/restaurant.js";
 import pgPromise from 'pg-promise';
 
-const DATABASE_URL = '';
+const DATABASE_URL = 'postgres://labtyadr:P4QwEz9XgTXGqz3KaIM_BuyfNeU6yxk8@tai.db.elephantsql.com/labtyadr?ssl=true';
 
 const connectionString = process.env.DATABASE_URL || DATABASE_URL;
 const db = pgPromise()(connectionString);
 
 describe("The restaurant booking table", function () {
+    this.timeout(4000);
     beforeEach(async function () {
         try {
             // clean the tables before each test run
@@ -21,7 +22,7 @@ describe("The restaurant booking table", function () {
     it("Get all the available tables", async function () {
         const restaurantTableBooking = await RestaurantTableBooking(db);
 
-        assert.deepEqual([{}, {}, {}, {}, {}], await restaurantTableBooking.getTables());
+        assert.deepEqual([{}, {}, {}, {}, {}], await restaurantTableBooking.getAvailableTables());
     });
 
 
@@ -35,16 +36,16 @@ describe("The restaurant booking table", function () {
             seats: 3
         });
 
-        assert.deepEqual("capacity greater than the table seats", result);
+        assert.equal("capacity greater than the table seats", result);
     });
 
     it("should check if there are available seats for a booking.", async function () {
         const restaurantTableBooking = await RestaurantTableBooking(db);
 
         // get all the tables
-
+        await restaurantTableBooking.getAvailableTables();
         // loop over the tables and see if there is a table that is not booked
-
+        
         assert.deepEqual(true, false);
     });
 
@@ -59,7 +60,7 @@ describe("The restaurant booking table", function () {
 
     it("Check if the booking has a contact number provided.", async function () {
         const restaurantTableBooking = await RestaurantTableBooking(db);
-        assert.deepEqual("Please enter a contact number", await restaurantTableBooking.bookTable({
+        assert.equal("Please enter a contact number", await restaurantTableBooking.bookTable({
             tableName: 'Table eight',
             username: 'Kim',
             seats: 2
@@ -99,7 +100,7 @@ describe("The restaurant booking table", function () {
 
     it("should list all booked tables.", async function () {
         let restaurantTableBooking = RestaurantTableBooking(db);
-        let tables = await restaurantTableBooking.getTables();
+        let tables = await restaurantTableBooking.getBookedTables();
         assert.deepEqual(6, tables.length);
     });
 
