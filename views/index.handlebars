@@ -52,10 +52,13 @@
 
                     <div class="control">
                         {{#if booked}}
-                        <img src="./images/reserved.png" width="60">
+                        <img src="./images/reserved.png" width="60"> 
+                        <form action="/cancel" method="get">
+                            <button type="submit">Cancel booking</button>
+                        </form>
                         {{else}}
                         <label class="radio">
-                            <input type="radio" name="tableId" id="tableId">
+                            <input type="radio" name="tableId" id="tableId" value='{{table_name}}'> 
                             Book this table
                         </label>
                         {{/if}}

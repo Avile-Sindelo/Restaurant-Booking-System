@@ -31,7 +31,7 @@ app.get("/", async (req, res) => {
     res.render('index', { tables : await database.getTables()})
 });
 
-app.get("/book", async (req, res) => {
+app.post("/book", async (req, res) => {
     let username = req.body.username;
     let occupants = req.body.booking_size;
     let number = req.body.phone_number;
@@ -43,18 +43,20 @@ app.get("/book", async (req, res) => {
     console.log('table name :', tableName);
 
     let bookingDetails = {
-        table_name: tableName,
+        tableName,
         seats: occupants,
         username: username,
-        contact_number: number
+        phoneNumber: number
     }
 
-    await database.bookTable(bookingDetails)
+    let result = await database.bookTable(bookingDetails);
+    console.log(result)
     res.redirect('/')
 });
 
 app.get("/cancel", async (req, res) => {
-
+    let tableName = req.body.tableId;
+    await database.cancelTableBooking(tableName);
     res.redirect('/bookings')
 });
 
